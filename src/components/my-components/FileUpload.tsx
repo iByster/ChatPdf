@@ -6,10 +6,12 @@ import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import toast from "react-hot-toast";
 import { useMutation } from "react-query";
+import { useRouter } from "next/navigation";
 
 type IProps = {};
 
 const FileUpload: React.FC<IProps> = ({}) => {
+  const router = useRouter();
   const [uploading, setUploading] = useState(false);
   const { mutate, isLoading } = useMutation({
     mutationFn: async ({
@@ -46,8 +48,9 @@ const FileUpload: React.FC<IProps> = ({}) => {
         }
 
         mutate(data, {
-          onSuccess: (data) => {
-            toast.success(data.message);
+          onSuccess: ({ chatId }) => {
+            toast.success("Chat created!");
+            router.push(`/chat/${chatId}`);
           },
           onError: (error) => {
             toast.error("Error creating chat");
@@ -73,7 +76,9 @@ const FileUpload: React.FC<IProps> = ({}) => {
         {uploading || isLoading ? (
           <>
             <Loader2 className="text-blue-500 w-10 h-10 animate-spin" />
-            <p className="mt-2 text-sm text-slate-400">Cookin&apos; up some AI shi</p>
+            <p className="mt-2 text-sm text-slate-400">
+              Cookin&apos; up some AI shi
+            </p>
           </>
         ) : (
           <>

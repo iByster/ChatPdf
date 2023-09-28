@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -49,6 +48,58 @@
     --ring: 212.7 26.8% 83.9;
   }
 }
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgba(39, 39, 39, 0.2);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(61, 61, 61, 0.4);
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background: rgba(91, 91, 91, 0.9);
+}
+
+
+/* Hide the scrollbar by default */
+.simple-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+/* Show the scrollbar on hover */
+.simple-scrollbar::-webkit-scrollbar:hover {
+  opacity: 1;
+}
+
+/* Track */
+.simple-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+.simple-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+.simple-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 
 
 @layer base {
