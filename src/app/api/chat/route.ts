@@ -1,6 +1,6 @@
 import { getContext } from "@/lib/context";
 import { db } from "@/lib/db";
-import { chats } from "@/lib/db/schema";
+import { chats, messages as drizzleMessages } from "@/lib/db/schema";
 import { Message, OpenAIStream, StreamingTextResponse } from "ai";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -56,7 +56,24 @@ export async function POST(req: Request) {
       stream: true,
     });
 
-    const stream = OpenAIStream(response);
+    const stream = OpenAIStream(response, {
+      onStart: async () => {
+        // save user message to db
+        await db.insert(drizzleMessages).values({
+          chatId,
+          content: lastMessage.content,
+          role: "user",
+        });
+      },
+      onCompletion: async (completion) => {
+        // save ai message to db
+        await db.insert(drizzleMessages).values({
+          chatId,
+          content: completion,
+          role: "system",
+        });
+      },
+    });
     return new StreamingTextResponse(stream);
   } catch (err) {
     console.log(err);
