@@ -3,8 +3,9 @@ import ChatSiderBar from "@/components/my-components/ChatSiderBar";
 import PDFViewer from "@/components/my-components/PDFViewer";
 import { db } from "@/lib/db";
 import { chats } from "@/lib/db/schema";
+import { checkSubscription } from "@/lib/subscription";
 import { auth } from "@clerk/nextjs";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -16,12 +17,17 @@ type Props = {
 
 const ChatPage = async ({ params: { chatId } }: Props) => {
   const { userId } = auth();
+  const isPro = await checkSubscription();
 
   if (!userId) {
     return redirect("./sign-in");
   }
 
-  const _chats = await db.select().from(chats).where(eq(chats.userId, userId));
+  const _chats = await db
+    .select()
+    .from(chats)
+    .where(eq(chats.userId, userId))
+    .orderBy(desc(chats.createdAt));
   const currenctChat = _chats.find((chat) => chat.id === parseInt(chatId));
 
   if (!currenctChat) {
@@ -33,7 +39,11 @@ const ChatPage = async ({ params: { chatId } }: Props) => {
       <div className="flex w-full max-h-screen">
         {/* chat sidebar */}
         <div className="flex-[1] max-w-xs">
-          <ChatSiderBar chatId={parseInt(chatId)} chats={_chats} />
+          <ChatSiderBar
+            chatId={parseInt(chatId)}
+            chats={_chats}
+            isPro={isPro}
+          />
         </div>
         {/* pdf viewer */}
         <div className="max-h-screen p-4 overflow-scroll flex-[5]">

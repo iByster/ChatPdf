@@ -5,7 +5,7 @@ import { Inbox, Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import toast from "react-hot-toast";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 type IProps = {};

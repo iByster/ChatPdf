@@ -1,16 +1,42 @@
+"use client";
 import { DrizzleChat as Chat } from "@/lib/db/schema";
 import React from "react";
-import { Code2, Home, MessageCircle, PlusCircle } from "lucide-react";
+import {
+  Code2,
+  CreditCardIcon,
+  Home,
+  Loader2,
+  MessageCircle,
+  PlusCircle,
+} from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
+import axios from "axios";
+import SubscriptionButton from "./SubscriptionButton";
+import { checkSubscription } from "@/lib/subscription";
 
 type Props = {
   chats: Chat[];
   chatId: number;
+  isPro: boolean;
 };
 
-const ChatSiderBar = ({ chats, chatId }: Props) => {
+const ChatSiderBar = ({ chats, chatId, isPro }: Props) => {
+  const [loading, setLoading] = React.useState(false);
+
+  const handleSubscription = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("/api/stripe");
+      window.location.href = response.data.url.url;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const renderChatButton = (chat: Chat) => {
     const { pdfName } = chat;
 
@@ -53,12 +79,7 @@ const ChatSiderBar = ({ chats, chatId }: Props) => {
             <p>Home</p>
           </div>
         </Link>
-        <Link href="https://github.com/iByster/ChatPdf">
-          <div className="flex items-center hover:text-gray-200">
-            <Code2 className="mr-2" />
-            Subscription
-          </div>
-        </Link>
+        <SubscriptionButton isPro={isPro} style="sidebar" />
         <Link href="https://github.com/iByster/ChatPdf">
           <div className="flex items-center hover:text-gray-200">
             <Code2 className="mr-2" />
